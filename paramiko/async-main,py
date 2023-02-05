@@ -1,0 +1,21 @@
+import asyncio
+import paramiko
+
+async def connect_to_device(device):
+    host, username, password = device
+    async with asyncssh.connect(host, username=username, password=password) as conn:
+        result = await conn.run('show system info', check=True)
+        return result.stdout
+
+async def main():
+    devices = [
+        ('hostname_or_ip_1', 'username_1', 'password_1'),
+        ('hostname_or_ip_2', 'username_2', 'password_2'),
+        # ...
+    ]
+    tasks = [connect_to_device(device) for device in devices]
+    outputs = await asyncio.gather(*tasks)
+    for output in outputs:
+        print(output)
+
+asyncio.run(main())
